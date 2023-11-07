@@ -5,7 +5,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Run NGCF.")
     parser.add_argument('--weights_path', nargs='?', default='Model_gowalla/',
                         help='Store model path.')
-    parser.add_argument('--pretrain_path', type=str, default='D:/neural_graph_collaborative_filtering_NGCF/Model_gowalla/model_gowalla_final.pth',
+    parser.add_argument('--pretrain_path', type=str, default='D:/neural_graph_collaborative_filtering_NGCF/Model_gowalla/model_gowalla_1.pth',
                         help='pretained model path')
     parser.add_argument('--data_path', nargs='?', default='D:/neural_graph_collaborative_filtering_NGCF/Data/',
                         help='Input data path.')
