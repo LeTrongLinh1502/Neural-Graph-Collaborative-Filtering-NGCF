@@ -5,6 +5,7 @@ import torch.nn.functional as F
 class NGCF(nn.Module):
     def __init__(self, n_user, n_item, norm_adj, args):
         super(NGCF, self).__init__()
+        self.model_type = args.model_type
         self.n_user = n_user
         self.n_item = n_item
         self.device = args.device

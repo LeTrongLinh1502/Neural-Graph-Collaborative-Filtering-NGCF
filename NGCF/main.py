@@ -79,7 +79,7 @@ if __name__ == '__main__':
             mf_loss += batch_mf_loss
             emb_loss += batch_emb_loss
             
-        if (epoch + 1) % 10 != 0:
+        if (epoch + 1) % 1 != 0:
             if args.verbose > 0 and epoch % args.verbose == 0:
                 perf_str = 'Epoch %d [%.1fs]: train==[%.5f=%.5f + %.5f]' % (
                     epoch, time() - t1, loss, mf_loss, emb_loss)
@@ -140,4 +140,14 @@ if __name__ == '__main__':
                   '\t'.join(['%.5f' % r for r in pres[idx]]),
                   '\t'.join(['%.5f' % r for r in hit[idx]]),
                   '\t'.join(['%.5f' % r for r in ndcgs[idx]]))
-    print(final_perf)   
+    print(final_perf)
+    
+    save_path = '%soutput/%s.result' % (args.proj_path, model.model_type) # Xác định đường dẫn để lưu hiệu suất kết quả.
+    ensureDir(save_path)
+    f = open(save_path, 'a')
+
+    f.write(
+        'embed_size=%d, lr=%.4f, layer_size=%s, node_dropout=%s, mess_dropout=%s, regs=%s, adj_type=%s\n\t%s\n'
+        % (args.embed_size, args.lr, args.layer_size, args.node_dropout, args.mess_dropout, args.regs,
+           args.adj_type, final_perf))
+    f.close()  
