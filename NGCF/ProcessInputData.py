@@ -12,9 +12,11 @@ with open('D:/neural_graph_collaborative_filtering_NGCF/Data/MovieLens/rating.cs
         item_id = int(item_id)  
         
         if user_id in user_item_dict:
-            user_item_dict[user_id].append(item_id)
+            if user_id < 30000 and item_id < 60000:
+                user_item_dict[user_id].append(item_id)
         else:
-            user_item_dict[user_id] = [item_id]
+            if user_id < 30000 and item_id < 60000:
+                user_item_dict[user_id] = [item_id]
     
 # print(user_item_dict)
 # Tạo file train.txt và test.txt
