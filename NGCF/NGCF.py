@@ -14,13 +14,13 @@ class NGCF(nn.Module):
         self.node_dropout = args.node_dropout[0]
         self.mess_dropout = args.mess_dropout
         self.batch_size = args.batch_size
-        self.norm_adj = norm_adj
+        # self.norm_adj = norm_adj
         self.layers = eval(args.layer_size)
         self.decay = eval(args.regs)[0]
         
         self.embedding_dict, self.weight_dict = self.init_weight()
         
-        self.sparse_norm_adj = self._convert_sp_mat_to_sp_tensor(self.norm_adj).to(self.device)
+        self.sparse_norm_adj = self._convert_sp_mat_to_sp_tensor(norm_adj).to(self.device)
     
     def init_weight(self):
         initializer = nn.init.xavier_uniform_

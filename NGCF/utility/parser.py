@@ -3,16 +3,16 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run NGCF.")
-    parser.add_argument('--weights_path', nargs='?', default='Model_gowalla/',
+    parser.add_argument('--weights_path', nargs='?', default='Model_MovieLens/',
                         help='Store model path.')
-    parser.add_argument('--pretrain_path', type=str, default='D:/neural_graph_collaborative_filtering_NGCF/Model_gowalla/model_gowalla.pth',
+    parser.add_argument('--pretrain_path', type=str, default='D:/neural_graph_collaborative_filtering_NGCF/Model_MovieLens/model_movieLens_2.pth',
                         help='pretained model path')
     parser.add_argument('--data_path', nargs='?', default='D:/neural_graph_collaborative_filtering_NGCF/Data/',
                         help='Input data path.')
-    parser.add_argument('--proj_path', nargs='?', default='D:/neural_graph_collaborative_filtering_NGCF/Model_gowalla/',
+    parser.add_argument('--proj_path', nargs='?', default='D:/neural_graph_collaborative_filtering_NGCF/Model_MovieLens/',
                         help='Project path.')
 
-    parser.add_argument('--dataset', nargs='?', default='gowalla',
+    parser.add_argument('--dataset', nargs='?', default='movielens',
                         help='Choose a dataset from {gowalla,movielens, amazon_book}')
     parser.add_argument('--pretrain', type=int, default=0,
                         help='0: No pretrain, -1: Pretrain with the learned embeddings, 1:Pretrain with stored models.')
@@ -25,7 +25,7 @@ def parse_args():
                         help='Embedding size.')
     parser.add_argument('--layer_size', nargs='?', default='[64,64,64]',
                         help='Output sizes of every layer')
-    parser.add_argument('--batch_size', type=int, default=1024,
+    parser.add_argument('--batch_size', type=int, default=4096,
                         help='Batch size.')
 
     parser.add_argument('--regs', nargs='?', default='[1e-5]',
