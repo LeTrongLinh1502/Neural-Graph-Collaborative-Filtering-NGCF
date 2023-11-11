@@ -4,8 +4,10 @@ from utility.helper import *
 from utility.metrics import *
 from utility.batch_test import *
 import multiprocessing
+import csv
 
 cores = multiprocessing.cpu_count() // 2
+file_encoding = 'utf-8'
 
 def predict_for_user(user_ids, model, K, drop_flag):
     user_items = []
@@ -68,13 +70,13 @@ if __name__ == '__main__':
                  norm_adj,
                  args).to(args.device)
     # Đường dẫn đến mô hình đã lưu
-    model_path = "D:/neural_graph_collaborative_filtering_NGCF/Model_gowalla/model_gowalla_1.pth"
+    model_path = "D:/neural_graph_collaborative_filtering_NGCF/Model_MovieLens/model_movieLens_2.pth"
 
     # Tạo mô hình và nạp trọng số
     model.load_state_dict(torch.load(model_path))
     model.eval()
 
-    user_id_to_predict = 39
+    user_id_to_predict = 15
 
     # Filter the user to predict
     users_to_predict = [user_id_to_predict]
@@ -90,3 +92,21 @@ if __name__ == '__main__':
 
     # Display the top predicted items for the user
     print(f"Top {K} predicted items for user {user_id_to_predict}: {top_items}")
+top_items_info= {}  
+with open('D:/neural_graph_collaborative_filtering_NGCF/Data/movielens/movie.csv', mode='r', encoding=file_encoding) as file:
+    csv_reader = csv.reader(file)
+    next(csv_reader)  
+    for row in csv_reader:
+        item_id = row [0] 
+        title_item = row [1]
+        item_id = int(item_id)  
+        title_item = str(title_item)  
+        
+        if item_id in top_items:
+            if user_id_to_predict in top_items_info:
+                top_items_info[item_id].append(title_item)
+            else:
+                top_items_info[item_id] = [title_item]
+                
+sorted_dict = {key: top_items_info[key] for key in top_items if key in top_items_info}           
+print(sorted_dict)
