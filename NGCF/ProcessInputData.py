@@ -23,7 +23,7 @@ with open('D:/neural_graph_collaborative_filtering_NGCF/Data/movielens/rating.cs
 train_data = {}
 test_data = {}
 for user_id, item_list in user_item_dict.items():
-    split_index = int(0.7 * len(item_list))
+    split_index = int(0.8 * len(item_list))
     train_data[user_id] = item_list[:split_index]
     test_data[user_id] = item_list[split_index:]
 
