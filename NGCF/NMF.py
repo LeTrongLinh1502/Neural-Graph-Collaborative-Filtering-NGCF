@@ -373,7 +373,7 @@ if __name__ == '__main__':
                   auc[idx])
     print(final_perf)
 
-    save_path = '%soutput/%s/%s.result' % (args.proj_path, args.dataset, model.model_type)
+    save_path = '%soutput/%s.result' % (args.proj_path, model.model_type)
     ensureDir(save_path)
     f = open(save_path, 'a')
 

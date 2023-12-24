@@ -3,16 +3,16 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run NGCF.")
-    parser.add_argument('--weights_path', nargs='?', default='Model_MovieLens/',
+    parser.add_argument('--weights_path', nargs='?', default='Model_gowalla/',
                         help='Store model path.')
-    parser.add_argument('--pretrain_path', type=str, default='D:/neural_graph_collaborative_filtering_NGCF/Model_MovieLens/model_movieLens_final.pth',
+    parser.add_argument('--pretrain_path', type=str, default='D:/neural_graph_collaborative_filtering_NGCF/Model_gowalla/model_movieLens_NMF.pth',
                         help='pretained model path')
     parser.add_argument('--data_path', nargs='?', default='D:/neural_graph_collaborative_filtering_NGCF/Data/',
                         help='Input data path.')
-    parser.add_argument('--proj_path', nargs='?', default='D:/neural_graph_collaborative_filtering_NGCF/Model_MovieLens/',
+    parser.add_argument('--proj_path', nargs='?', default='D:/neural_graph_collaborative_filtering_NGCF/Model_gowalla/',
                         help='Project path.')
 
-    parser.add_argument('--dataset', nargs='?', default='movielens',
+    parser.add_argument('--dataset', nargs='?', default='gowalla',
                         help='Choose a dataset from {gowalla,movielens, amazon_book}')
     parser.add_argument('--pretrain', type=int, default=0,
                         help='0: No pretrain, -1: Pretrain with the learned embeddings, 1:Pretrain with stored models.')
@@ -58,4 +58,5 @@ def parse_args():
 
     parser.add_argument('--report', type=int, default=0,
                         help='0: Disable performance report w.r.t. sparsity levels, 1: Show performance report w.r.t. sparsity levels')
+    parser.add_argument('--keep_prob', nargs='?', default='[0.1]')
     return parser.parse_args()
