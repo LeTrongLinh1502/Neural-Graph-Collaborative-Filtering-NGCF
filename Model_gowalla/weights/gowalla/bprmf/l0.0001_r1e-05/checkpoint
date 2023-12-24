@@ -1,2 +1,0 @@
-model_checkpoint_path: "D:/neural_graph_collaborative_filtering_NGCF/Model_gowalla/weights/gowalla/bprmf/l0.0001_r1e-05/weights-99"
-all_model_checkpoint_paths: "D:/neural_graph_collaborative_filtering_NGCF/Model_gowalla/weights/gowalla/bprmf/l0.0001_r1e-05/weights-99"
