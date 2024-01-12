@@ -255,7 +255,7 @@ if __name__ == '__main__':
     config.gpu_options.allow_growth = True
     sess = tff.Session(config=config)
 
-    # *********************************************************
+    # ********************************************************
     # reload the pretrained model parameters.
     if args.pretrain == 1:
         layer = '-'.join([str(l) for l in eval(args.layer_size)])
@@ -347,13 +347,9 @@ if __name__ == '__main__':
         cur_best_pre_0, stopping_step, should_stop = early_stopping(ret['recall'][0], cur_best_pre_0,
                                                                     stopping_step, expected_order='acc', flag_step=5)
 
-        # *********************************************************
-        # early stopping when cur_best_pre_0 is decreasing for ten successive steps.
         if should_stop == True:
             break
 
-        # *********************************************************
-        # save the user & item embeddings for pretraining.
         if ret['recall'][0] == cur_best_pre_0 and args.save_flag == 1:
             save_saver.save(sess, weights_save_path + '/weights', global_step=epoch)
             print('save the weights in path: ', weights_save_path)
