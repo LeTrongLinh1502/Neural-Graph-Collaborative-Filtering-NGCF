@@ -49,14 +49,14 @@ if __name__ == '__main__':
     args.mess_dropout = eval(args.mess_dropout)
 
     model = NGCF(data_generator.n_users,data_generator.n_items,norm_adj,args).to(args.device)
-    model_path = "D:/neural_graph_collaborative_filtering_NGCF/Model_MovieLens/model_movieLens_2.pth"
+    model_path = "D:/neural_graph_collaborative_filtering_NGCF/Model_MovieLens/model_MovieLens_1.pth"
 
     model.load_state_dict(torch.load(model_path))
     model.eval()
 
     user_id_to_predict = 15
     # users_to_predict = [user_id_to_predict]
-    K = 10
+    K = 5
 
     predictions = predict(model, user_id_to_predict, K)
     top_items = predictions[user_id_to_predict]

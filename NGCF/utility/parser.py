@@ -12,13 +12,13 @@ def parse_args():
     parser.add_argument('--proj_path', nargs='?', default='D:/neural_graph_collaborative_filtering_NGCF/Model_gowalla/',
                         help='Project path.')
 
-    parser.add_argument('--dataset', nargs='?', default='gowalla',
+    parser.add_argument('--dataset', nargs='?', default='movielens',
                         help='Choose a dataset from {gowalla,movielens, amazon_book}')
     parser.add_argument('--pretrain', type=int, default=0,
                         help='0: No pretrain, -1: Pretrain with the learned embeddings, 1:Pretrain with stored models.')
     parser.add_argument('--verbose', type=int, default=50,
                         help='Interval of evaluation.')
-    parser.add_argument('--epoch', type=int, default=10,
+    parser.add_argument('--epoch', type=int, default=100,
                         help='Number of epoch.')
 
     parser.add_argument('--embed_size', type=int, default=64,
