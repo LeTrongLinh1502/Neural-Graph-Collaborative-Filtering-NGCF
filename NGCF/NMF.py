@@ -6,7 +6,9 @@ from scipy.sparse import csr_matrix
 from utility.batch_test import *
 import os
 import sys
-from tensorflow.contrib.layers.python.layers import batch_norm as batch_norm
+import tensorflow.compat.v1 as tff
+tff.disable_v2_behavior()
+# from tensorflow.contrib.layers.python.layers import batch_norm as batch_norm
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 
 class NMF(object):
@@ -34,12 +36,12 @@ class NMF(object):
         self.verbose = args.verbose
 
         # placeholder definition
-        self.users = tf.placeholder(tf.int32, shape=(None))
-        self.pos_items = tf.placeholder(tf.int32, shape=(None))
-        self.neg_items = tf.placeholder(tf.int32, shape=(None))
+        self.users = tff.placeholder(tf.int32, shape=(None))
+        self.pos_items = tff.placeholder(tf.int32, shape=(None))
+        self.neg_items = tff.placeholder(tf.int32, shape=(None))
 
-        self.dropout_keep = tf.placeholder(tf.float32, shape=[None])
-        self.train_phase = tf.placeholder(tf.bool)
+        self.dropout_keep = tff.placeholder(tf.float32, shape=[None])
+        self.train_phase = tff.placeholder(tf.bool)
 
         # self.global_step = tf.Variable(0, trainable=False)
         self.weights = self._init_weights()
@@ -58,7 +60,7 @@ class NMF(object):
 
         # self.dy_lr = tf.train.exponential_decay(self.lr, self.global_step, 10000, self.lr_decay, staircase=True)
         # self.opt = tf.train.RMSPropOptimizer(learning_rate=self.dy_lr).minimize(self.loss, global_step=self.global_step)
-        self.opt = tf.train.RMSPropOptimizer(learning_rate=self.lr).minimize(self.loss)
+        self.opt = tff.train.RMSPropOptimizer(learning_rate=self.lr).minimize(self.loss)
         # self.updates = self.opt.minimize(self.loss, var_list=self.weights)
 
         self._statistics_params()
@@ -66,7 +68,7 @@ class NMF(object):
     def _init_weights(self):
         all_weights = dict()
 
-        initializer = tf.contrib.layers.xavier_initializer()
+        initializer = tf.initializers.GlorotNormal()
 
 
         if self.pretrain_data is None:
@@ -105,7 +107,7 @@ class NMF(object):
         regularizer = tf.nn.l2_loss(users) + tf.nn.l2_loss(pos_items) + tf.nn.l2_loss(neg_items)
         regularizer = regularizer/self.batch_size
 
-        maxi = tf.log(tf.nn.sigmoid(pos_scores - neg_scores))
+        maxi = tf.math.log(tf.nn.sigmoid(pos_scores - neg_scores))
         mf_loss = tf.negative(tf.reduce_mean(maxi))
 
         emb_loss = self.regs[-1] * regularizer
@@ -201,7 +203,7 @@ class NMF(object):
 
     def batch_norm_layer(self, x, train_phase, scope_bn):
         with tf.variable_scope(scope_bn):
-            return batch_norm(x, decay=0.9, center=True, scale=True, updates_collections=None,
+            return tf.keras.layers.BatchNormalization(x, decay=0.9, center=True, scale=True, updates_collections=None,
             is_training=True, reuse=tf.AUTO_REUSE, trainable=True, scope=scope_bn)
 
     def _statistics_params(self):
@@ -239,7 +241,7 @@ if __name__ == '__main__':
 
     model = NMF(data_config=config, pretrain_data=pretrain_data)
 
-    saver = tf.train.Saver()
+    saver = tff.train.Saver()
     # *********************************************************
     # save the model parameters.
     if args.save_flag == 1:
@@ -247,11 +249,11 @@ if __name__ == '__main__':
         weights_save_path = '%sweights/%s/%s/%s/l%s_r%s' % (args.proj_path, args.dataset, model.model_type, layer, str(args.lr),
                                                             '-'.join([str(r) for r in eval(args.regs)]))
         ensureDir(weights_save_path)
-        save_saver = tf.train.Saver(max_to_keep=1)
+        save_saver = tff.train.Saver(max_to_keep=1)
 
-    config = tf.ConfigProto()
+    config = tff.ConfigProto()
     config.gpu_options.allow_growth = True
-    sess = tf.Session(config=config)
+    sess = tff.Session(config=config)
 
     # *********************************************************
     # reload the pretrained model parameters.
@@ -261,14 +263,14 @@ if __name__ == '__main__':
                                                     '-'.join([str(r) for r in eval(args.regs)]))
         ckpt = tf.train.get_checkpoint_state(os.path.dirname(pretrain_path + '/checkpoint'))
         if ckpt and ckpt.model_checkpoint_path:
-            sess.run(tf.global_variables_initializer())
+            sess.run(tff.global_variables_initializer())
             saver.restore(sess, ckpt.model_checkpoint_path)
             print('load the pretrained model parameters from: ', pretrain_path)
 
             # *********************************************************
             # get the performance from pretrained model.
             users_to_test = list(data_generator.test_set.keys())
-            ret = test(sess, model, users_to_test, drop_flag=True)
+            ret = test_MF_NCF(sess, model, users_to_test, drop_flag=True)
             cur_best_pre_0 = ret['recall'][0]
 
             pretrain_ret = 'pretrained model recall=[%.5f, %.5f], precision=[%.5f, %.5f], hit=[%.5f, %.5f],' \
@@ -279,12 +281,12 @@ if __name__ == '__main__':
                             ret['ndcg'][0], ret['ndcg'][-1], ret['auc'])
             print(pretrain_ret)
         else:
-            sess.run(tf.global_variables_initializer())
+            sess.run(tff.global_variables_initializer())
             cur_best_pre_0 = 0.
             print('without pretraining.')
 
     else:
-        sess.run(tf.global_variables_initializer())
+        sess.run(tff.global_variables_initializer())
         cur_best_pre_0 = 0.
         print('without pretraining.')
 
@@ -323,7 +325,7 @@ if __name__ == '__main__':
 
         t2 = time()
         users_to_test = list(data_generator.test_set.keys())
-        ret = test(sess, model, users_to_test, batch_test_flag=True)
+        ret = test_MF_NCF(sess, model, users_to_test, batch_test_flag=True)
 
         t3 = time()
 
@@ -377,6 +379,6 @@ if __name__ == '__main__':
     ensureDir(save_path)
     f = open(save_path, 'a')
 
-    f.write('embed_size=%d, lr=%.4f, layer_size=%s, keep_prob=%s, regs=%s, loss_type=%s, \n\t%s\n'
-            % (args.embed_size, args.lr, args.layer_size, args.keep_prob, args.regs, args.loss_type, final_perf))
+    f.write('embed_size=%d, lr=%.4f, layer_size=%s, keep_prob=%s, regs=%s, \n\t%s\n'
+            % (args.embed_size, args.lr, args.layer_size, args.keep_prob, args.regs, final_perf))
     f.close()
